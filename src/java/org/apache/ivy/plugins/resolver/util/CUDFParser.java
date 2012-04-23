@@ -122,16 +122,31 @@ public class CUDFParser
     private void validateArtifact( String packageLine, String versionLine, String urlLine, List artifacts )
         throws MalformedURLException
     {
-        if ( packageLine == null || versionLine == null || urlLine == null )
+        if ( packageLine == null || versionLine == null )
         {
             return;
         }
         String[] info = packageLine.substring( PACKAGE_START_LINE.length() ).trim().split( SEPARATOR );
         String version = versionLine.substring( NUMBER_START_LINE.length() ).trim();
-        String url = urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" );
+        URL url;
+        if ( urlLine == null )
+        {
+            url = null;
+        }
+        else
+        {
+            try
+            {
+                url = new URL( urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" ) );
+            }
+            catch ( MalformedURLException e )
+            {
+                url = null;
+            }
+        }
         Artifact artifact =
-            new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), "", "", "",
-                                 new URL( url ), null );
+            new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), "", "", "", url,
+                                 null );
         artifacts.add( artifact );
     }
 }
