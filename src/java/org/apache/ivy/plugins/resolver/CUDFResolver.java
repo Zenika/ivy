@@ -24,7 +24,7 @@ public class CUDFResolver
     private static final String DEFAULT_URL = "http://localhost:9091/archiva";
 
     private static final String DEFAULT_URL_SEARCH =
-        "/restServices/archivaServices/cudfService/coneRequest/[groupId]/[artifactId]/[version]";
+        "/restServices/archivaServices/cudfService/cone/[groupId]/[artifactId]/[version]";
 
     private String url;
 
