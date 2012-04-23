@@ -35,6 +35,11 @@ public class CUDFResolver
         configure();
     }
 
+    public String getName()
+    {
+        return "cudf";
+    }
+
     private void configure()
     {
         if ( this.url == null )
@@ -96,10 +101,6 @@ public class CUDFResolver
     public void setSearchUrl( String searchUrl )
     {
         this.searchUrl = searchUrl;
-    }
-
-    public String getTypeName() {
-        return "cudf";
     }
 
     // TODO improve this
