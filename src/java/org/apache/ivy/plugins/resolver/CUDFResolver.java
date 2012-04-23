@@ -26,14 +26,9 @@ public class CUDFResolver
     private static final String DEFAULT_URL_SEARCH =
         "/restServices/archivaServices/cudfService/coneRequest/[groupId]/[artifactId]/[version]";
 
-    private static final String DEFAULT_URL_DL =
-        "/restServices/archivaServices/searchService/getArtifactURL/[groupId]/[artifactId]/[version]";
-
     private String url;
 
     private String searchUrl;
-
-    private String downloadUrl;
 
     public CUDFResolver()
     {
@@ -49,10 +44,6 @@ public class CUDFResolver
         if ( this.searchUrl == null )
         {
             this.searchUrl = DEFAULT_URL_SEARCH;
-        }
-        if ( this.downloadUrl == null )
-        {
-            this.downloadUrl = DEFAULT_URL_DL;
         }
     }
 
