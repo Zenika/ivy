@@ -1,7 +1,8 @@
-package org.apache.ivy.plugins.resolver.util;
+package org.apache.ivy.plugins.parser.cudf;
 
 import junit.framework.TestCase;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.plugins.parser.cudf.CUDFParser;
 
 import java.net.MalformedURLException;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.apache.ivy.plugins.resolver.util;
+package org.apache.ivy.plugins.parser.cudf;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -9,11 +9,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author adrien
@@ -128,25 +129,15 @@ public class CUDFParser
         }
         String[] info = packageLine.substring( PACKAGE_START_LINE.length() ).trim().split( SEPARATOR );
         String version = versionLine.substring( NUMBER_START_LINE.length() ).trim();
-        URL url;
-        if ( urlLine == null )
+        Map/*<String, String>*/ extraAttributes = new HashMap();
+        if ( urlLine != null )
         {
-            url = null;
-        }
-        else
-        {
-            try
-            {
-                url = new URL( urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" ) );
-            }
-            catch ( MalformedURLException e )
-            {
-                url = null;
-            }
+            extraAttributes.put( "url",
+                                 urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" ) );
         }
         Artifact artifact =
-            new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), "", "", "", url,
-                                 null );
+            new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), "", "", "",
+                                 extraAttributes );
         artifacts.add( artifact );
     }
 }
