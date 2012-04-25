@@ -28,7 +28,11 @@ public class CUDFParser
 
     private static final String URL_START_LINE = "url: ";
 
-    private static final String SEPARATOR = "%3";
+    private static final String SEPARATOR = "%3a";
+
+    private static final String TYPE_START_LINE = "type: ";
+
+    private static final String VERSION_START_LINE = "version: ";
 
     /**
      * Returns a list of Artifacts fetch from a CUDF formatted InputStream.
@@ -55,6 +59,8 @@ public class CUDFParser
             String packageLine = null;
             String versionLine = null;
             String urlLine = null;
+            String typeLine = null;
+            String cudfVersion = null;
             while ( true )
             {
                 String line = next;
@@ -66,8 +72,11 @@ public class CUDFParser
 
                 if ( line == null || ( line != null && line.length() == 0 ) )
                 {
-                    validateArtifact( packageLine, versionLine, urlLine, artifacts );
-                    packageLine = versionLine = urlLine = null;
+                    if ( cudfVersion != null && !"0".equals( versionLine.substring( VERSION_START_LINE.length() ).trim() ) )
+                    {
+                        validateArtifact( packageLine, versionLine, urlLine, typeLine, artifacts );
+                    }
+                    packageLine = versionLine = urlLine = typeLine = cudfVersion = null;
                     if ( line == null )
                     {
                         break;
@@ -92,6 +101,14 @@ public class CUDFParser
                 else if ( line.startsWith( URL_START_LINE ) )
                 {
                     urlLine = line;
+                }
+                else if ( line.startsWith( TYPE_START_LINE ) )
+                {
+                    typeLine = line;
+                }
+                else if ( line.startsWith( VERSION_START_LINE ) )
+                {
+                    cudfVersion = line;
                 }
             }
         }
@@ -120,7 +137,8 @@ public class CUDFParser
         return artifacts;
     }
 
-    private void validateArtifact( String packageLine, String versionLine, String urlLine, List artifacts )
+    private void validateArtifact( String packageLine, String versionLine, String urlLine, String typeLine,
+                                   List artifacts )
         throws MalformedURLException
     {
         if ( packageLine == null || versionLine == null )
@@ -129,6 +147,7 @@ public class CUDFParser
         }
         String[] info = packageLine.substring( PACKAGE_START_LINE.length() ).trim().split( SEPARATOR );
         String version = versionLine.substring( NUMBER_START_LINE.length() ).trim();
+        String type = typeLine == null ? "" : typeLine.substring( TYPE_START_LINE.length() ).trim();
         Map/*<String, String>*/ extraAttributes = new HashMap();
         if ( urlLine != null )
         {
@@ -136,8 +155,8 @@ public class CUDFParser
                                  urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" ) );
         }
         Artifact artifact =
-            new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), "", "", "",
-                                 extraAttributes );
+            new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
+                                 type, extraAttributes );
         artifacts.add( artifact );
     }
 }
