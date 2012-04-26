@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.text.ParseException;
 
 /**
+ * The CUDF resolve use a server side dependency resolver to find out all the transitive dependencies of the project.
+ *
  * @author Adrien Lecharpentier
  */
 public class CUDFResolver
@@ -30,15 +32,7 @@ public class CUDFResolver
 
     private String searchUrl;
 
-    public CUDFResolver()
-    {
-        configure();
-    }
 
-    public String getName()
-    {
-        return "cudf";
-    }
 
     private void configure()
     {
@@ -55,6 +49,7 @@ public class CUDFResolver
     public ResolvedModuleRevision getDependency( DependencyDescriptor dd, ResolveData data )
         throws ParseException
     {
+        configure();
         clearIvyAttempts();
         Message.info( ":: dependency " + dd );
         return super.getDependency( dd, data );
@@ -80,7 +75,8 @@ public class CUDFResolver
     public void publish( Artifact artifact, File src, boolean overwrite )
         throws IOException
     {
-        Message.info( ":: publishing " + artifact );
+        throw new IllegalStateException(
+            "You cannot use CUDF Resolver to publish artifact. It is only a 'resolve'/'retrieve' resolver." );
     }
 
     public String getUrl()
