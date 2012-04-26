@@ -7,6 +7,7 @@ import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.plugins.parser.cudf.CUDFParser;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandler;
@@ -14,7 +15,12 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The CUDF resolve use a server side dependency resolver to find out all the transitive dependencies of the project.
@@ -113,6 +119,33 @@ public class CUDFResolver
     public void setPattern( String pattern )
     {
         this.pattern = pattern;
+    }
+
+    private List/*<Artifact>*/ retrieveCUDFArtifacts( ModuleRevisionId moduleRevisionId )
+        throws IOException
+    {
+        InputStream inputStream = null;
+        try
+        {
+            inputStream = urlHandler.openStream( new URL(
+                replaceTokens( url + searchUrl, moduleRevisionId.getOrganisation(), moduleRevisionId.getName(),
+                               moduleRevisionId.getRevision() ) ) );
+            return new CUDFParser().parse( inputStream );
+        }
+        finally
+        {
+            if ( inputStream != null )
+            {
+                try
+                {
+                    inputStream.close();
+                }
+                catch ( IOException e )
+                {
+                    //nothing
+                }
+            }
+        }
     }
 
     // TODO improve this
