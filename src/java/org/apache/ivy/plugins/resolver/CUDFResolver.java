@@ -9,6 +9,8 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.url.URLHandler;
+import org.apache.ivy.util.url.URLHandlerRegistry;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +34,11 @@ public class CUDFResolver
 
     private String searchUrl;
 
+    private boolean useCache = false;
+
+    private URLHandler urlHandler = URLHandlerRegistry.getHttp();
+
+    private String pattern;
 
 
     private void configure()
@@ -43,6 +50,10 @@ public class CUDFResolver
         if ( this.searchUrl == null )
         {
             this.searchUrl = DEFAULT_URL_SEARCH;
+        }
+        if ( pattern == null )
+        {
+            throw new IllegalStateException( "The pattern must be configured" );
         }
     }
 
@@ -79,9 +90,9 @@ public class CUDFResolver
             "You cannot use CUDF Resolver to publish artifact. It is only a 'resolve'/'retrieve' resolver." );
     }
 
-    public String getUrl()
+    public boolean isM2compatible()
     {
-        return url;
+        return false;
     }
 
     public void setUrl( String url )
@@ -89,14 +100,19 @@ public class CUDFResolver
         this.url = url;
     }
 
-    public String getSearchUrl()
-    {
-        return searchUrl;
-    }
-
     public void setSearchUrl( String searchUrl )
     {
         this.searchUrl = searchUrl;
+    }
+
+    public void setUseCache( boolean useCache )
+    {
+        this.useCache = useCache;
+    }
+
+    public void setPattern( String pattern )
+    {
+        this.pattern = pattern;
     }
 
     // TODO improve this
