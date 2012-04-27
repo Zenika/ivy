@@ -1,15 +1,17 @@
 package org.apache.ivy.plugins.resolver;
 
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.report.DownloadReport;
-import org.apache.ivy.core.resolve.DownloadOptions;
+import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.parser.cudf.CUDFParser;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
-import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
@@ -19,7 +21,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -67,25 +69,68 @@ public class CUDFResolver
         throws ParseException
     {
         configure();
-        clearIvyAttempts();
-        Message.info( ":: dependency " + dd );
-        return super.getDependency( dd, data );
+        ResolvedModuleRevision resolvedModuleRevision;
+        try
+        {
+            List artifacts = retrieveCUDFArtifacts( dd.getDependencyRevisionId() );
+            Artifact rootArtifact = (Artifact) artifacts.get( 0 );
+            DefaultModuleDescriptor moduleDescriptor =
+                DefaultModuleDescriptor.newDefaultInstance( rootArtifact.getModuleRevisionId() );
+            for ( int i = 0; i < artifacts.size() - 1; i++ )
+            {
+                Artifact dep = (Artifact) artifacts.get( i + 1 );
+                if ( dep.getUrl() == null )
+                {
+                    try
+                    {
+                        String tmpUrl = dep.getModuleRevisionId().getExtraAttribute( "url" );
+                        dep = new DefaultArtifact( dep.getModuleRevisionId(), new Date(), dep.getName(), dep.getType(),
+                                                   dep.getExt(), new URL( tmpUrl ), dep.getExtraAttributes() );
+                    }
+                    catch ( MalformedURLException e )
+                    {
+                        dep = new DefaultArtifact( dep.getModuleRevisionId(), new Date(), dep.getName(), dep.getType(),
+                                                   dep.getExt(), dep.getExtraAttributes() );
+                    }
+                }
+                moduleDescriptor.addDependency( new DefaultDependencyDescriptor( dep.getModuleRevisionId(), true ) );
+                // TODO found the current configuration name!!!
+                moduleDescriptor.addArtifact( "default", dep );
+
+            }
+            resolvedModuleRevision = new ResolvedModuleRevision( this, this, moduleDescriptor,
+                                                                 new MetadataArtifactDownloadReport( rootArtifact ),
+                                                                 true );
+        }
+        catch ( IOException e )
+        {
+            throw new IllegalStateException();
+        }
+        return resolvedModuleRevision;
+    }
+
+    public EventManager getEventManager()
+    {
+        return null;
+    }
+
+    protected ResolvedModuleRevision findModuleInCache( DependencyDescriptor dd, ResolveData data )
+    {
+        return this.findModuleInCache( dd, data, false );
+    }
+
+    protected ResolvedModuleRevision findModuleInCache( DependencyDescriptor dd, ResolveData data, boolean anyResolver )
+    {
+        if ( useCache )
+        {
+            super.addArtifactPattern( pattern );
+            return super.findModuleInCache( dd, data, anyResolver );
+        }
+        return null;
     }
 
     public ResolvedResource findIvyFileRef( DependencyDescriptor dd, ResolveData data )
     {
-        clearIvyAttempts();
-        ModuleRevisionId mrid = dd.getDependencyRevisionId();
-        Message.info(
-            ":: finding ivy file for " + mrid.getOrganisation() + ":" + mrid.getName() + ":" + mrid.getRevision() );
-        // TODO il va me falloir le nom du fichier..
-        ResolvedResource resolvedResource = new ResolvedResource( null, mrid.getRevision() );
-        return resolvedResource;
-    }
-
-    public DownloadReport download( Artifact[] artifacts, DownloadOptions options )
-    {
-        Message.info( ":: download file" );
         return null;
     }
 
