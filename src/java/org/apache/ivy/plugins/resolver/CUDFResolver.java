@@ -121,6 +121,13 @@ public class CUDFResolver
         this.pattern = pattern;
     }
 
+    /**
+     * Retrieve the lists of artifacts present in a cudf format, the root artifact included.
+     *
+     * @param moduleRevisionId describe the root artifact
+     * @return the List of all artifacts needed to the root artifact, included itself
+     * @throws IOException
+     */
     private List/*<Artifact>*/ retrieveCUDFArtifacts( ModuleRevisionId moduleRevisionId )
         throws IOException
     {
