@@ -2,7 +2,6 @@ package org.apache.ivy.plugins.parser.cudf;
 
 import junit.framework.TestCase;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.plugins.parser.cudf.CUDFParser;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -18,7 +17,7 @@ public class CUDFParserTest
     public void testParser() throws MalformedURLException
     {
         CUDFParser parser = new CUDFParser();
-        List artifacts = parser.parse( this.getClass().getResourceAsStream( "testdownload.cudf" ) );
+        List artifacts = parser.parse( this.getClass().getResourceAsStream( "/org/apache/ivy/plugins/resolver/util/testdownload.cudf" ) );
         assertEquals( 3, artifacts.size() );
         for ( int i = 0; i < artifacts.size(); i++ )
         {

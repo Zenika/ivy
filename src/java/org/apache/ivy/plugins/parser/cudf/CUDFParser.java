@@ -9,12 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URL;
+import java.util.*;
 
 /**
  * @author adrien
@@ -28,7 +24,7 @@ public class CUDFParser
 
     private static final String URL_START_LINE = "url: ";
 
-    private static final String SEPARATOR = "%3a";
+    private static final String SEPARATOR = "%3";
 
     private static final String TYPE_START_LINE = "type: ";
 
@@ -83,7 +79,7 @@ public class CUDFParser
                     }
                 }
 
-                if ( line.startsWith( "#" ) || line.startsWith( "preamble: " ) || line.startsWith( "property: " )
+                if ( line.startsWith( "#" ) || line.startsWith( "preamble:" ) || line.startsWith( "property: " )
                     || line.startsWith( "univ-checksum: " ) || ( line.length() > 0 && line.charAt( 0 ) == ' ' ) )
                 {
                     continue;
@@ -148,15 +144,15 @@ public class CUDFParser
         String[] info = packageLine.substring( PACKAGE_START_LINE.length() ).trim().split( SEPARATOR );
         String version = versionLine.substring( NUMBER_START_LINE.length() ).trim();
         String type = typeLine == null ? "" : typeLine.substring( TYPE_START_LINE.length() ).trim();
+        String url = urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" );
         Map/*<String, String>*/ extraAttributes = new HashMap();
         if ( urlLine != null )
         {
-            extraAttributes.put( "url",
-                                 urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" ) );
+            extraAttributes.put( "url", url );
         }
         Artifact artifact =
-            new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
-                                 type, extraAttributes );
+            new DefaultArtifact( ModuleRevisionId.newInstance(info[0], info[1], version), new Date(), info[1], type,
+                                 type, new URL( url ), extraAttributes );
         artifacts.add( artifact );
     }
 }
