@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -83,7 +84,7 @@ public class CUDFParser
                     }
                 }
 
-                if ( line.startsWith( "#" ) || line.startsWith( "preamble: " ) || line.startsWith( "property: " )
+                if ( line.startsWith( "#" ) || line.startsWith( "preamble:" ) || line.startsWith( "property: " )
                     || line.startsWith( "univ-checksum: " ) || ( line.length() > 0 && line.charAt( 0 ) == ' ' ) )
                 {
                     continue;
@@ -149,14 +150,16 @@ public class CUDFParser
         String version = versionLine.substring( NUMBER_START_LINE.length() ).trim();
         String type = typeLine == null ? "" : typeLine.substring( TYPE_START_LINE.length() ).trim();
         Map/*<String, String>*/ extraAttributes = new HashMap();
+        String url = null;
         if ( urlLine != null )
         {
+            url = urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" );
             extraAttributes.put( "url",
-                                 urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" ) );
+                                 url );
         }
         Artifact artifact =
             new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
-                                 type, extraAttributes );
+                                 type, new URL(url), extraAttributes );
         artifacts.add( artifact );
     }
 }
