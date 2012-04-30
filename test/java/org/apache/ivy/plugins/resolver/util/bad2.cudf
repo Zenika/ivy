@@ -2,17 +2,17 @@ preamble:
 property: number: string, recommends: vpkgformula = [true!], suggests: vpkglist = [],
           url: string = [""]
 
-package: org.springframework%3spring-core
+package: org.springframework%3aspring-core
 version: 5
-url: http%3//localhost%39091/archiva/repository/toto/org/springframework/spring-core/3.1.1.RELEASE/spring-core-3.1.1.RELEASE.jar
-depends: org.springframework%3spring-asm = 3, commons-logging%3commons-logging = 5
+url: http%3a//localhost%3a9091/archiva/repository/toto/org/springframework/spring-core/3.1.1.RELEASE/spring-core-3.1.1.RELEASE.jar
+depends: org.springframework%3aspring-asm = 3, commons-logging%3acommons-logging = 5
 
-package: org.springframework%3spring-asm
+package: org.springframework%3aspring-asm
 number: 3.1.1.RELEASE
 version: 3
-url: http%3//localhost%39091/archiva/repository/toto/org/springframework/spring-asm/3.1.1.RELEASE/spring-asm-3.1.1.RELEASE.jar
+url: http%3a//localhost%3a9091/archiva/repository/toto/org/springframework/spring-asm/3.1.1.RELEASE/spring-asm-3.1.1.RELEASE.jar
 
-package: commons-logging%3commons-logging
+package: commons-logging%3acommons-logging
 number: 1.1.1
 version: 5
-url: http%3//localhost%39091/archiva/repository/toto/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar
+url: http%3a//localhost%3a9091/archiva/repository/toto/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar
