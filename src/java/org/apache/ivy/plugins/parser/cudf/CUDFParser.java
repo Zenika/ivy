@@ -151,15 +151,17 @@ public class CUDFParser
         String type = typeLine == null ? "" : typeLine.substring( TYPE_START_LINE.length() ).trim();
         Map/*<String, String>*/ extraAttributes = new HashMap();
         String url = null;
+        Artifact artifact = null;
         if ( urlLine != null )
         {
             url = urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" );
-            extraAttributes.put( "url",
-                                 url );
+            extraAttributes.put( "url",  url );
+            artifact = new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
+                    type, new URL(url), extraAttributes );
+        } else {
+            artifact = new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
+                    type, extraAttributes );
         }
-        Artifact artifact =
-            new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
-                                 type, new URL(url), extraAttributes );
         artifacts.add( artifact );
     }
 }
