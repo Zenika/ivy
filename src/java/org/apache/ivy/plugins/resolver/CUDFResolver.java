@@ -104,7 +104,7 @@ public class CUDFResolver
         }
         catch ( IOException e )
         {
-            throw new IllegalStateException();
+            throw new IllegalStateException(e);
         }
         return resolvedModuleRevision;
     }
@@ -164,6 +164,10 @@ public class CUDFResolver
     public void setPattern( String pattern )
     {
         this.pattern = pattern;
+    }
+
+    public void setUrlHandler(URLHandler urlHandler) {
+        this.urlHandler = urlHandler;
     }
 
     /**
