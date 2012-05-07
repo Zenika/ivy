@@ -1,12 +1,15 @@
 package org.apache.ivy.plugins.resolver;
 
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
@@ -65,7 +68,7 @@ public class CUDFResolver
         }
     }
 
-    public ResolvedModuleRevision getDependency( DependencyDescriptor dd, ResolveData data )
+        public final ResolvedModuleRevision getDependency( DependencyDescriptor dd, ResolveData data )
         throws ParseException
     {
         configure();
@@ -76,37 +79,43 @@ public class CUDFResolver
             Artifact rootArtifact = (Artifact) artifacts.get( 0 );
             DefaultModuleDescriptor moduleDescriptor =
                 DefaultModuleDescriptor.newDefaultInstance( rootArtifact.getModuleRevisionId() );
-            for ( int i = 0; i < artifacts.size() - 1; i++ )
+            MetadataArtifactDownloadReport madr = new MetadataArtifactDownloadReport( rootArtifact );
+            madr.setDownloadStatus( DownloadStatus.SUCCESSFUL );
+            madr.setArtifactOrigin( new ArtifactOrigin( rootArtifact, false, "" ) );
+            madr.setSearched( true );
+            for ( int i = 1; i < artifacts.size(); i++ )
             {
-                Artifact dep = (Artifact) artifacts.get( i + 1 );
-                if ( dep.getUrl() == null )
-                {
-                    try
-                    {
-                        String tmpUrl = dep.getModuleRevisionId().getExtraAttribute( "url" );
-                        dep = new DefaultArtifact( dep.getModuleRevisionId(), new Date(), dep.getName(), dep.getType(),
-                                                   dep.getExt(), new URL( tmpUrl ), dep.getExtraAttributes() );
-                    }
-                    catch ( MalformedURLException e )
-                    {
-                        dep = new DefaultArtifact( dep.getModuleRevisionId(), new Date(), dep.getName(), dep.getType(),
-                                                   dep.getExt(), dep.getExtraAttributes() );
-                    }
-                }
+                Artifact dep = (Artifact) artifacts.get( i );
                 moduleDescriptor.addDependency( new DefaultDependencyDescriptor( dep.getModuleRevisionId(), true ) );
                 // TODO found the current configuration name!!!
                 moduleDescriptor.addArtifact( "default", dep );
 
             }
-            resolvedModuleRevision = new ResolvedModuleRevision( this, this, moduleDescriptor,
-                                                                 new MetadataArtifactDownloadReport( rootArtifact ),
-                                                                 true );
+            resolvedModuleRevision = new ResolvedModuleRevision( this, this, moduleDescriptor, madr, true );
         }
         catch ( IOException e )
         {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException( e );
         }
         return resolvedModuleRevision;
+    }
+
+    protected void put( Artifact artifact, File src, String dest, boolean overwrite )
+        throws IOException
+    {
+        throw new IllegalStateException( "No put possible for cudf resolver" );
+    }
+
+    protected void putChecksum( Artifact artifact, File src, String dest, boolean overwrite, String algorithm )
+        throws IOException
+    {
+        throw new IllegalStateException( "No put possible for cudf resolver" );
+    }
+
+    protected void putSignature( Artifact artifact, File src, String dest, boolean overwrite )
+        throws IOException
+    {
+        throw new IllegalStateException( "No put possible for cudf resolver" );
     }
 
     public EventManager getEventManager()
@@ -171,7 +180,9 @@ public class CUDFResolver
     }
 
     /**
-     * Retrieve the lists of artifacts present in a cudf format, the root artifact included.
+     * Retrieve the list of artifacts present in a cudf format, the root artifact included.
+     * <p/>
+     * The list has at least one element: the root artifact.
      *
      * @param moduleRevisionId describe the root artifact
      * @return the List of all artifacts needed to the root artifact, included itself
@@ -186,7 +197,7 @@ public class CUDFResolver
             inputStream = urlHandler.openStream( new URL(
                 replaceTokens( url + searchUrl, moduleRevisionId.getOrganisation(), moduleRevisionId.getName(),
                                moduleRevisionId.getRevision() ) ) );
-            return new CUDFParser().parse( inputStream );
+            return new CUDFParser(this.url).parse( inputStream );
         }
         finally
         {
@@ -204,7 +215,17 @@ public class CUDFResolver
         }
     }
 
-    // TODO improve this
+    /**
+     * Returns the source string with [groupId], [artfactIf] and [version] replaced.
+     * <p/>
+     * GEFEN TODO improve
+     *
+     * @param source     the string to change
+     * @param groupID    the groupId
+     * @param artifactId the artifactId
+     * @param version    the version
+     * @return the source string with [groupId], [artfactIf] and [version] replaced.
+     */
     private static final String replaceTokens( String source, String groupID, String artifactId, String version )
     {
         return source.replaceAll( "\\[groupId\\]", groupID ).replaceAll( "\\[artifactId\\]", artifactId ).replaceAll(

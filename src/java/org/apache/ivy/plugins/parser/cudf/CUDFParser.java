@@ -35,6 +35,13 @@ public class CUDFParser
 
     private static final String VERSION_START_LINE = "version: ";
 
+    private final String baseURL;
+
+    public CUDFParser(String baseServerURL)
+    {
+        this.baseURL = baseServerURL;
+    }
+
     /**
      * Returns a list of Artifacts fetch from a CUDF formatted InputStream.
      * <p/>
@@ -149,18 +156,21 @@ public class CUDFParser
         String[] info = packageLine.substring( PACKAGE_START_LINE.length() ).trim().split( SEPARATOR );
         String version = versionLine.substring( NUMBER_START_LINE.length() ).trim();
         String type = typeLine == null ? "" : typeLine.substring( TYPE_START_LINE.length() ).trim();
-        Map/*<String, String>*/ extraAttributes = new HashMap();
         String url = null;
         Artifact artifact = null;
         if ( urlLine != null )
         {
             url = urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" );
-            extraAttributes.put( "url",  url );
+            // TODO improve this check
+            if (!url.startsWith( "http://" ))
+            {
+                url = baseURL + url;
+            }
             artifact = new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
-                    type, new URL(url), extraAttributes );
+                    type, new URL(url), null );
         } else {
             artifact = new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
-                    type, extraAttributes );
+                    type );
         }
         artifacts.add( artifact );
     }
