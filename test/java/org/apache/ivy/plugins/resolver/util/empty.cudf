@@ -1,0 +1,3 @@
+preamble:
+property: number: string, recommends: vpkgformula = [true!], suggests: vpkglist = [],
+          url: string = [""]
