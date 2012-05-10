@@ -1,16 +1,16 @@
 package org.apache.ivy.plugins.resolver;
 
-import junit.framework.*;
-import org.apache.ivy.core.module.descriptor.*;
-import org.apache.ivy.core.module.id.*;
-import org.apache.ivy.core.resolve.*;
-import org.apache.ivy.plugins.repository.*;
-import org.apache.ivy.plugins.repository.file.*;
-import org.apache.ivy.plugins.repository.url.*;
-import org.apache.ivy.util.url.*;
+import junit.framework.TestCase;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.plugins.repository.Repository;
+import org.apache.ivy.plugins.repository.url.URLRepository;
+import org.apache.ivy.util.url.URLHandlerRegistry;
 
-import java.io.*;
-import java.text.*;
+import java.io.File;
+import java.text.ParseException;
 
 /**
  * @author Antoine ROUAZE <antoine.rouaze AT zenika.com>
