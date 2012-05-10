@@ -3,8 +3,6 @@ package org.apache.ivy.plugins.resolver;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.descriptor.Configuration;
-import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -21,10 +19,8 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,7 +29,7 @@ import java.util.List;
  * @author Adrien Lecharpentier
  */
 public class CUDFResolver
-    extends RepositoryResolver
+    extends URLResolver
 {
 
     private static final String DEFAULT_URL = "http://localhost:9091/archiva";
