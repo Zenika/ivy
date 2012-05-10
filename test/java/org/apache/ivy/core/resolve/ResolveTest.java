@@ -17,25 +17,7 @@
  */
 package org.apache.ivy.core.resolve;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import junit.framework.TestCase;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
@@ -66,11 +48,29 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
+import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.ivy.util.StringUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -4330,7 +4330,19 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classifier",
             "1.0", "test-classifier", "jar", "jar").exists());
     }
-    
+
+
+    public void testCUDF() throws Exception{
+        // Works only with an archiva server
+        IvySettings settings = new IvySettings();
+        settings.load(new File("test/test-cudf/ivysettings.xml"));
+        Ivy ivy = Ivy.newInstance(settings);
+        ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
+        ResolveReport report = ivy.resolve(new File("test/test-cudf/ivy.xml"));
+        System.out.println(report);
+    }
+
+
     public void testResolveMaven2ParentPomChainResolver() throws Exception {
         // test has a dependency on test2 but there is no version listed. test has a parent of parent(2.0) 
         // then parent2. Both parents have a dependencyManagement element for test2, and each list the version as
