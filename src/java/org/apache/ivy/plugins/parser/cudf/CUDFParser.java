@@ -170,7 +170,7 @@ public class CUDFParser
                     type, new URL(url), null );
         } else {
             artifact = new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
-                    type, null );
+                    type );
         }
         artifacts.add( artifact );
     }
