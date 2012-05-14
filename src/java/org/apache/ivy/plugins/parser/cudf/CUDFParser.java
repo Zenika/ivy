@@ -1,3 +1,18 @@
+/*
+ *      Copyright 2012 Zenika
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.apache.ivy.plugins.parser.cudf;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -13,12 +28,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * @author adrien
+ * @author Adrien Lecharpentier <adrien.lecharpentier@zenika.com>
  * @since 2012-04-23 14:59
  */
 public class CUDFParser
@@ -37,7 +50,7 @@ public class CUDFParser
 
     private final String baseURL;
 
-    public CUDFParser(String baseServerURL)
+    public CUDFParser( String baseServerURL )
     {
         this.baseURL = baseServerURL;
     }
@@ -80,7 +93,8 @@ public class CUDFParser
 
                 if ( line == null || ( line != null && line.length() == 0 ) )
                 {
-                    if ( cudfVersion != null && !"0".equals( versionLine.substring( VERSION_START_LINE.length() ).trim() ) )
+                    if ( cudfVersion != null && !"0".equals(
+                        versionLine.substring( VERSION_START_LINE.length() ).trim() ) )
                     {
                         validateArtifact( packageLine, versionLine, urlLine, typeLine, artifacts );
                     }
@@ -162,15 +176,19 @@ public class CUDFParser
         {
             url = urlLine.substring( URL_START_LINE.length() ).trim().replaceAll( SEPARATOR, ":" );
             // TODO improve this check
-            if (!url.startsWith( "http://" ))
+            if ( !url.startsWith( "http://" ) )
             {
                 url = baseURL + url;
             }
-            artifact = new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
-                    type, new URL(url), null );
-        } else {
-            artifact = new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1], type,
-                    type );
+            artifact =
+                new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1],
+                                     type, type, new URL( url ), null );
+        }
+        else
+        {
+            artifact =
+                new DefaultArtifact( ModuleRevisionId.newInstance( info[0], info[1], version ), new Date(), info[1],
+                                     type, type );
         }
         artifacts.add( artifact );
     }
