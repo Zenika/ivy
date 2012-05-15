@@ -47,7 +47,7 @@ public class CUDFResolverTest extends TestCase {
     }
 
     public void testGetDependency() throws ParseException {
-        ModuleRevisionId moduleRevisionId = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
+        ModuleRevisionId moduleRevisionId = ModuleRevisionId.newInstance("org/apache", "test", "1.0");
         DependencyDescriptor dependencyDescriptor = new DefaultDependencyDescriptor(moduleRevisionId, false);
         ResolvedModuleRevision moduleRevision = resolver.getDependency(dependencyDescriptor, null);
         ModuleRevisionId resolvedModuleRevisionId = moduleRevision.getDescriptor().getResolvedModuleRevisionId();
@@ -57,4 +57,6 @@ public class CUDFResolverTest extends TestCase {
         assertEquals("Error: The module revision should have to have two dependencies attached to it", moduleRevision.getDescriptor().getDependencies().length, 2);
         System.out.println(moduleRevision);
     }
+
+
 }
