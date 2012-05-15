@@ -4331,18 +4331,6 @@ public class ResolveTest extends TestCase {
             "1.0", "test-classifier", "jar", "jar").exists());
     }
 
-
-    public void testCUDF() throws Exception{
-        // Works only with an archiva server
-        IvySettings settings = new IvySettings();
-        settings.load(new File("test/test-cudf/ivysettings.xml"));
-        Ivy ivy = Ivy.newInstance(settings);
-        ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
-        ResolveReport report = ivy.resolve(new File("test/test-cudf/ivy.xml"));
-        System.out.println(report);
-    }
-
-
     public void testResolveMaven2ParentPomChainResolver() throws Exception {
         // test has a dependency on test2 but there is no version listed. test has a parent of parent(2.0) 
         // then parent2. Both parents have a dependencyManagement element for test2, and each list the version as

@@ -18,8 +18,10 @@ package org.apache.ivy.plugins.resolver;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadStatus;
@@ -36,6 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,13 +56,15 @@ public class CUDFResolver
     private static final String DEFAULT_URL_SEARCH =
         "/restServices/archivaServices/cudfService/cone/[groupId]/[artifactId]/[version]";
 
+    private static final String DEFAULT_ARTIFACT_PATTERN = "http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]";
+
     private String url;
 
     private String searchUrl;
 
-    private boolean useCache = false;
+    private boolean useCache = true;
 
-    private URLHandler urlHandler = URLHandlerRegistry.getHttp();
+    private URLHandler urlHandler = URLHandlerRegistry.getDefault();
 
     private String pattern;
 
@@ -75,7 +81,10 @@ public class CUDFResolver
         }
         if ( pattern == null )
         {
-            throw new IllegalStateException( "The pattern must be configured" );
+//            throw new IllegalStateException( "The pattern must be configured" );
+        }
+        if (getArtifactPatterns() == null || getArtifactPatterns().isEmpty()) {
+            addArtifactPattern(DEFAULT_ARTIFACT_PATTERN);
         }
     }
 
@@ -84,31 +93,41 @@ public class CUDFResolver
     {
         configure();
         ResolvedModuleRevision resolvedModuleRevision;
-        try
-        {
-            List artifacts = retrieveCUDFArtifacts( dd.getDependencyRevisionId() );
-            Artifact rootArtifact = (Artifact) artifacts.get( 0 );
-            DefaultModuleDescriptor moduleDescriptor =
-                DefaultModuleDescriptor.newDefaultInstance( rootArtifact.getModuleRevisionId() );
-            MetadataArtifactDownloadReport madr = new MetadataArtifactDownloadReport( rootArtifact );
-            madr.setDownloadStatus( DownloadStatus.SUCCESSFUL );
-            madr.setArtifactOrigin( new ArtifactOrigin( rootArtifact, false, "" ) );
-            madr.setSearched( true );
-            for ( int i = 1; i < artifacts.size(); i++ )
+        resolvedModuleRevision = findModuleInCache(dd, data);
+        if (resolvedModuleRevision == null) {
+            try
             {
-                Artifact dep = (Artifact) artifacts.get( i );
-                moduleDescriptor.addDependency( new DefaultDependencyDescriptor( dep.getModuleRevisionId(), true ) );
-                // TODO found the current configuration name!!!
-                moduleDescriptor.addArtifact( "default", dep );
+                List artifacts = retrieveCUDFArtifacts( dd.getDependencyRevisionId() );
+                Artifact rootArtifact = (Artifact) artifacts.get( 0 );
+                MetadataArtifactDownloadReport madr = createMetadataArtifactDownloadReport(rootArtifact);
+                DependencyArtifactDescriptor[] dds = new DependencyArtifactDescriptor[] {
+                        new DefaultDependencyArtifactDescriptor(dd, rootArtifact.getName(), rootArtifact.getType(),
+                                rootArtifact.getExt(), rootArtifact.getUrl(), rootArtifact.getExtraAttributes())};
+                DefaultModuleDescriptor moduleDescriptor = DefaultModuleDescriptor.newDefaultInstance(rootArtifact.getModuleRevisionId(), dds);
+                for ( int i = 1; i < artifacts.size(); i++ )
+                {
+                    Artifact dep = (Artifact) artifacts.get( i );
+                    moduleDescriptor.addDependency( new DefaultDependencyDescriptor( dep.getModuleRevisionId(), true ) );
+                    // TODO found the current configuration name!!!
+                    moduleDescriptor.addArtifact( "default", dep );
 
+                }
+                resolvedModuleRevision = new ResolvedModuleRevision( this, this, moduleDescriptor, madr, true );
             }
-            resolvedModuleRevision = new ResolvedModuleRevision( this, this, moduleDescriptor, madr, true );
-        }
-        catch ( IOException e )
-        {
-            throw new IllegalStateException( e );
+            catch ( IOException e )
+            {
+                throw new IllegalStateException( e );
+            }
         }
         return resolvedModuleRevision;
+    }
+
+    private MetadataArtifactDownloadReport createMetadataArtifactDownloadReport(Artifact rootArtifact) {
+        MetadataArtifactDownloadReport madr = new MetadataArtifactDownloadReport( rootArtifact );
+        madr.setDownloadStatus( DownloadStatus.SUCCESSFUL );
+        madr.setArtifactOrigin( new ArtifactOrigin( rootArtifact, false, "" ) );
+        madr.setSearched( true );
+        return madr;
     }
 
     protected void put( Artifact artifact, File src, String dest, boolean overwrite )
@@ -143,7 +162,7 @@ public class CUDFResolver
     {
         if ( useCache )
         {
-            super.addArtifactPattern( pattern );
+//            super.addArtifactPattern( pattern );
             return super.findModuleInCache( dd, data, anyResolver );
         }
         return null;
@@ -161,10 +180,15 @@ public class CUDFResolver
             "You cannot use CUDF Resolver to publish artifact. It is only a 'resolve'/'retrieve' resolver." );
     }
 
-    public boolean isM2compatible()
-    {
-        return false;
-    }
+
+    /**
+     * TODO Review: Should return value of m2compatibleAttribute
+     * @return
+     */
+//    public boolean isM2compatible()
+//    {
+//        return false;
+//    }
 
     public void setUrl( String url )
     {
@@ -202,11 +226,17 @@ public class CUDFResolver
     private List/*<Artifact>*/ retrieveCUDFArtifacts( ModuleRevisionId moduleRevisionId )
         throws IOException
     {
+        String organisation;
+        if (isM2compatible()) {
+            organisation = moduleRevisionId.getOrganisation().replace('.', '/');
+        } else {
+            organisation = moduleRevisionId.getOrganisation();
+        }
         InputStream inputStream = null;
         try
         {
             inputStream = urlHandler.openStream( new URL(
-                replaceTokens( url + searchUrl, moduleRevisionId.getOrganisation(), moduleRevisionId.getName(),
+                replaceTokens( url + searchUrl, organisation, moduleRevisionId.getName(),
                                moduleRevisionId.getRevision() ) ) );
             return new CUDFParser(this.url).parse( inputStream );
         }

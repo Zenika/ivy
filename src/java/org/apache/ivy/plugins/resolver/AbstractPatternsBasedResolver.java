@@ -69,13 +69,13 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     public ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
-        if (m2compatible) {
-            mrid = convertM2IdForResourceSearch(mrid);
-        }
-// I don't understand why the result is false also its attribute is true
-//        if (isM2compatible()) {
+//        if (m2compatible) {
 //            mrid = convertM2IdForResourceSearch(mrid);
 //        }
+// Careful about isM2compatible method overwritten in CUDFResolver
+        if (isM2compatible()) {
+            mrid = convertM2IdForResourceSearch(mrid);
+        }
         return findResourceUsingPatterns(mrid, artifactPatterns, artifact,
             getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
     }

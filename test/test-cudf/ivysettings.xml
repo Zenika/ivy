@@ -4,8 +4,6 @@
     <cache name="local" basedir="${basedir}/${dl}/cache" />
   </caches>-->
   <resolvers>
-    <cudf name="cudf" pattern="${dl}/[module]-[revision].[ext]" m2compatible="true">
-        <artifact pattern="http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
-    </cudf>
+    <cudf name="cudf" pattern="[module]-[revision].[ext]" url="file:test/repositories/cudf" searchUrl="/[groupId]/[artifactId]/[version]/[artifactId]-[version].cudf" m2compatible="true"/>
   </resolvers>
 </ivysettings>
