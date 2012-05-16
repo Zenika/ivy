@@ -18,6 +18,7 @@ package org.apache.ivy.plugins.resolver;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
@@ -58,6 +59,7 @@ public class CUDFResolver
 
     private static final String DEFAULT_ARTIFACT_PATTERN = "http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]";
 
+
     private String url;
 
     private String searchUrl;
@@ -86,40 +88,42 @@ public class CUDFResolver
         if (getArtifactPatterns() == null || getArtifactPatterns().isEmpty()) {
             addArtifactPattern(DEFAULT_ARTIFACT_PATTERN);
         }
+        addIvyPattern(url + searchUrl);
     }
 
         public final ResolvedModuleRevision getDependency( DependencyDescriptor dd, ResolveData data )
         throws ParseException
     {
         configure();
-        ResolvedModuleRevision resolvedModuleRevision;
-        resolvedModuleRevision = findModuleInCache(dd, data);
-        if (resolvedModuleRevision == null) {
-            try
-            {
-                List artifacts = retrieveCUDFArtifacts( dd.getDependencyRevisionId() );
-                Artifact rootArtifact = (Artifact) artifacts.get( 0 );
-                MetadataArtifactDownloadReport madr = createMetadataArtifactDownloadReport(rootArtifact);
-                DependencyArtifactDescriptor[] dds = new DependencyArtifactDescriptor[] {
-                        new DefaultDependencyArtifactDescriptor(dd, rootArtifact.getName(), rootArtifact.getType(),
-                                rootArtifact.getExt(), rootArtifact.getUrl(), rootArtifact.getExtraAttributes())};
-                DefaultModuleDescriptor moduleDescriptor = DefaultModuleDescriptor.newDefaultInstance(rootArtifact.getModuleRevisionId(), dds);
-                for ( int i = 1; i < artifacts.size(); i++ )
-                {
-                    Artifact dep = (Artifact) artifacts.get( i );
-                    moduleDescriptor.addDependency( new DefaultDependencyDescriptor( dep.getModuleRevisionId(), true ) );
-                    // TODO found the current configuration name!!!
-                    moduleDescriptor.addArtifact( "default", dep );
-
-                }
-                resolvedModuleRevision = new ResolvedModuleRevision( this, this, moduleDescriptor, madr, true );
-            }
-            catch ( IOException e )
-            {
-                throw new IllegalStateException( e );
-            }
-        }
-        return resolvedModuleRevision;
+        return super.getDependency(dd, data);
+//        ResolvedModuleRevision resolvedModuleRevision;
+//        resolvedModuleRevision = findModuleInCache(dd, data);
+//        if (resolvedModuleRevision == null) {
+//            try
+//            {
+//                List artifacts = retrieveCUDFArtifacts( dd.getDependencyRevisionId() );
+//                Artifact rootArtifact = (Artifact) artifacts.get( 0 );
+//                MetadataArtifactDownloadReport madr = createMetadataArtifactDownloadReport(rootArtifact);
+//                DependencyArtifactDescriptor[] dds = new DependencyArtifactDescriptor[] {
+//                        new DefaultDependencyArtifactDescriptor(dd, rootArtifact.getName(), rootArtifact.getType(),
+//                                rootArtifact.getExt(), rootArtifact.getUrl(), rootArtifact.getExtraAttributes())};
+//                DefaultModuleDescriptor moduleDescriptor = DefaultModuleDescriptor.newDefaultInstance(rootArtifact.getModuleRevisionId(), dds);
+//                for ( int i = 1; i < artifacts.size(); i++ )
+//                {
+//                    Artifact dep = (Artifact) artifacts.get( i );
+//                    moduleDescriptor.addDependency( new DefaultDependencyDescriptor( dep.getModuleRevisionId(), true ) );
+//                    // TODO found the current configuration name!!!
+//                    moduleDescriptor.addArtifact( "default", dep );
+//
+//                }
+//                resolvedModuleRevision = new ResolvedModuleRevision( this, this, moduleDescriptor, madr, true );
+//            }
+//            catch ( IOException e )
+//            {
+//                throw new IllegalStateException( e );
+//            }
+//        }
+//        return resolvedModuleRevision;
     }
 
     private MetadataArtifactDownloadReport createMetadataArtifactDownloadReport(Artifact rootArtifact) {
@@ -170,7 +174,12 @@ public class CUDFResolver
 
     public ResolvedResource findIvyFileRef( DependencyDescriptor dd, ResolveData data )
     {
-        return null;
+        ModuleRevisionId moduleRevisionId = dd.getDependencyRevisionId();
+        moduleRevisionId = convertM2IdForResourceSearch(moduleRevisionId);
+        ResolvedResource resolvedResource = findResourceUsingPatterns(moduleRevisionId, getIvyPatterns(),
+                new DefaultArtifact(moduleRevisionId, data.getDate(), moduleRevisionId.getName(), "cudf", "cudf", true),
+                getRMDParser(dd, data), data.getDate());
+        return resolvedResource;
     }
 
     public void publish( Artifact artifact, File src, boolean overwrite )

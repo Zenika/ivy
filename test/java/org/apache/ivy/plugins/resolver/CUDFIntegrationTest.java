@@ -51,6 +51,7 @@ public class CUDFIntegrationTest extends TestCase{
     }
 
     public void testCUDFCacheIntegration() throws Exception{
+        ivy.configure(new File("test/test-cudf/ivysettings.xml"));
         ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
         ResolveReport report = ivy.resolve(new File("test/test-cudf/ivy.xml"));
         assertTrue(report.getDownloadSize() > 0);
