@@ -47,6 +47,7 @@ public final class ModuleDescriptorParserRegistry extends AbstractModuleDescript
     private ModuleDescriptorParserRegistry() {
         parsers.add(PomModuleDescriptorParser.getInstance());
         parsers.add(OSGiManifestParser.getInstance());
+        parsers.add(CUDFModuleDescriptorParser.getInstance());
         parsers.add(XmlModuleDescriptorParser.getInstance());
     }
 
