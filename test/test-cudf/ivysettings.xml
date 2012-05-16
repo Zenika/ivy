@@ -4,6 +4,6 @@
     <cache name="local" basedir="${basedir}/${dl}/cache" />
   </caches>-->
   <resolvers>
-    <cudf name="cudf" pattern="[module]-[revision].[ext]" url="file:test/repositories/cudf" searchUrl="/[groupId]/[artifactId]/[version]/[artifactId]-[version].cudf" m2compatible="true"/>
+    <cudf name="cudf" pattern="[module]-[revision].[ext]" url="file:test/test-cudf/repositories/cudf-with-url" searchUrl="/[groupId]/[artifactId]/[version]/[artifactId]-[version].cudf" m2compatible="true"/>
   </resolvers>
 </ivysettings>

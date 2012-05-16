@@ -26,7 +26,6 @@ public class CUDFIntegrationTest extends TestCase{
         createCache();
 
         ivy = Ivy.newInstance();
-        ivy.configure(new File("test/test-cudf/ivysettings.xml"));
     }
 
     private void createCache() {
@@ -38,6 +37,14 @@ public class CUDFIntegrationTest extends TestCase{
     }
 
     public void testCUDFIntegration() throws Exception{
+        ivy.configure(new File("test/test-cudf/ivysettings.xml"));
+        ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
+        ResolveReport report = ivy.resolve(new File("test/test-cudf/ivy.xml"));
+        assertEquals(report.getArtifacts().size(), 3);
+    }
+
+    public void testCUDFIntegrationWithoutUrl() throws Exception {
+        ivy.configure(new File("test/test-cudf/ivysettings-without-url.xml"));
         ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
         ResolveReport report = ivy.resolve(new File("test/test-cudf/ivy.xml"));
         assertEquals(report.getArtifacts().size(), 3);

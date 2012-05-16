@@ -1,0 +1,16 @@
+preamble:
+property: number: string, recommends: vpkgformula = [true!], suggests: vpkglist = [],
+          url: string = [""]
+
+package: org.apache%3atest
+number: 1.0
+version: 5
+depends: org.springframework%3aspring-asm = 3, commons-logging%3acommons-logging = 5
+
+package: org.springframework%3aspring-asm
+number: 3.1.1.RELEASE
+version: 3
+
+package: commons-logging%3acommons-logging
+number: 1.1.1
+version: 5

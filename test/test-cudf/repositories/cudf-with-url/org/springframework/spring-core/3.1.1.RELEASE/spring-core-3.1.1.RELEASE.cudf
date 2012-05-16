@@ -1,0 +1,22 @@
+preamble:
+property: number: string, recommends: vpkgformula = [true!], suggests: vpkglist = [],
+          url: string = [""]
+
+package: org.springframework%3aspring-core
+number: 3.1.1.RELEASE
+version: 5
+type: jar
+url: http%3a//repo1.maven.org/maven2/org/springframework/spring-core/3.1.1.RELEASE/spring-core-3.1.1.RELEASE.jar
+depends: org.springframework%3aspring-asm = 3, commons-logging%3acommons-logging = 5
+
+package: org.springframework%3aspring-asm
+number: 3.1.1.RELEASE
+version: 3
+type: jar
+url: http%3a//repo1.maven.org/maven2/org/springframework/spring-asm/3.1.1.RELEASE/spring-asm-3.1.1.RELEASE.jar
+
+package: commons-logging%3acommons-logging
+number: 1.1.1
+version: 5
+type: jar
+url: http%3a//repo1.maven.org/maven2/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar
