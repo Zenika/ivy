@@ -1,5 +1,6 @@
 package org.apache.ivy.plugins.parser.cudf;
 
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
@@ -12,6 +13,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
+import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParser;
@@ -51,30 +53,39 @@ public class CUDFModuleDescriptorParser implements ModuleDescriptorParser {
     }
 
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL, Resource res, boolean validate) throws ParseException, IOException {
+        IvyContext context = IvyContext.getContext();
+        ResolveData resolveData = context.getResolveData();
+
         CUDFParser parser = new CUDFParser("");
         List artifacts = parser.parse(URLHandlerRegistry.getDefault().openStream(descriptorURL));
         Artifact rootArtifact = (Artifact) artifacts.get(0);
         DefaultModuleDescriptor moduleDescriptor = new DefaultModuleDescriptor(this, res);
         moduleDescriptor.setResolvedPublicationDate(new Date(res.getLastModified()));
-        moduleDescriptor.addConfiguration(new Configuration("default"));
-        moduleDescriptor.addArtifact("default", rootArtifact);
-//        moduleDescriptor.addConfiguration(new Configuration("default", Configuration.Visibility.PUBLIC,
-//                "runtime dependencies and master artifact can be used with this conf",
-//                new String[] {"runtime", "master"}, true, null));
+        addConfigurations(resolveData.getCurrentVisitNode().getConfsToFetch(), moduleDescriptor);
+        moduleDescriptor.addArtifact("master", rootArtifact);
         ModuleRevisionId moduleRevisionId = rootArtifact.getModuleRevisionId();
         for (int i = 1; i < artifacts.size(); i++) {
             Artifact dep = (Artifact) artifacts.get(i);
             DefaultDependencyDescriptor dependencyDescriptor = new DefaultDependencyDescriptor(moduleDescriptor, dep.getModuleRevisionId(), true, false, true);
-            dependencyDescriptor.addDependencyConfiguration("default", "default(*)");
+            dependencyDescriptor.addDependencyConfiguration("master", "master(*)");
             DependencyArtifactDescriptor dependencyArtifactDescriptor = new DefaultDependencyArtifactDescriptor(dependencyDescriptor,
                     dependencyDescriptor.getDependencyId().getName(), dep.getType(), dep.getExt(), dep.getUrl(), dep.getExtraAttributes());
             // TODO: verified scope name
-            dependencyDescriptor.addDependencyArtifact("default", dependencyArtifactDescriptor);
+            dependencyDescriptor.addDependencyArtifact("master", dependencyArtifactDescriptor);
             moduleDescriptor.addDependency(dependencyDescriptor);
             // TODO found the current configuration name!!!
         }
         moduleDescriptor.setModuleRevisionId(moduleRevisionId);
         return moduleDescriptor;
+    }
+
+    private void addConfigurations(String[] cheatConfs, DefaultModuleDescriptor moduleDescriptor) {
+        moduleDescriptor.addConfiguration(new Configuration("master"));
+        for (int i = 0, cheatConfsLength = cheatConfs.length; i < cheatConfsLength; i++) {
+            String cheatConf = cheatConfs[i];
+            moduleDescriptor.addConfiguration(new Configuration(cheatConf, Configuration.Visibility.PUBLIC, "Parents conf", new String[] {"master"}, false, null));
+//            moduleDescriptor.addConfiguration(new Configuration(cheatConf));
+        }
     }
 
     public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException {

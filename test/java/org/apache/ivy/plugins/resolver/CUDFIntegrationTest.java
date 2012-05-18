@@ -58,4 +58,11 @@ public class CUDFIntegrationTest extends TestCase{
         ResolveReport report1 = ivy.resolve(new File("test/test-cudf/ivy.xml"));
         assertEquals(report1.getDownloadSize(), 0);
     }
+
+    public void testCUDFIntegration1() throws Exception{
+        ivy.configure(new File("test/test-cudf/ivysettings.xml"));
+        ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
+        ResolveReport report = ivy.resolve(new File("src/example/configurations/multi-projects/filter-framework/ivy.xml"));
+//        assertEquals(4, report.getArtifacts().size());
+    }
 }

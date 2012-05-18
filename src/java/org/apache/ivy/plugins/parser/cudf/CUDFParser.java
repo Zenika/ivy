@@ -167,6 +167,10 @@ public class CUDFParser
         {
             return;
         }
+        String strPackage = packageLine.substring( PACKAGE_START_LINE.length() ).trim();
+        if (!strPackage.contains(SEPARATOR)) {
+            throw new IllegalArgumentException("The line \"package\" must have a colon separator to differentiate the organization and the name");
+        }
         String[] info = packageLine.substring( PACKAGE_START_LINE.length() ).trim().split( SEPARATOR );
         String version = versionLine.substring( NUMBER_START_LINE.length() ).trim();
         String type = typeLine == null ? "" : typeLine.substring( TYPE_START_LINE.length() ).trim();
