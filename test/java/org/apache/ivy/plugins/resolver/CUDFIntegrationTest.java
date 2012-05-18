@@ -40,7 +40,7 @@ public class CUDFIntegrationTest extends TestCase{
         ivy.configure(new File("test/test-cudf/ivysettings.xml"));
         ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
         ResolveReport report = ivy.resolve(new File("test/test-cudf/ivy.xml"));
-        assertEquals(report.getArtifacts().size(), 3);
+        assertEquals(4, report.getArtifacts().size());
     }
 
     public void testCUDFIntegrationWithoutUrl() throws Exception {

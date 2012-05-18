@@ -7,4 +7,3 @@
         <cudf name="cudf" pattern="[module]-[revision].[ext]" url="file:test/test-cudf/repositories/cudf-without-url" searchUrl="/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" m2compatible="true"/>
     </resolvers>
 </ivysettings>
-sfa
