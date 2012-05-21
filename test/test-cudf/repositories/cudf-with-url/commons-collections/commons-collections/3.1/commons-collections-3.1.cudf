@@ -1,0 +1,9 @@
+preamble:
+property: number: string, recommends: vpkgformula = [true!], suggests: vpkglist = [],
+          url: string = [""]
+
+package: commons-collections%3acommons-collections
+number: 3.1
+version: 5
+type: jar
+url: http%3a//repo1.maven.org/maven2/commons-collections/commons-collections/3.1/commons-collections-3.1.jar

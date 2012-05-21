@@ -1,0 +1,9 @@
+preamble:
+property: number: string, recommends: vpkgformula = [true!], suggests: vpkglist = [],
+          url: string = [""]
+
+package: commons-logging%3acommons-logging
+number: 1.1.1
+version: 5
+type: jar
+url: http%3a//repo1.maven.org/maven2/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar

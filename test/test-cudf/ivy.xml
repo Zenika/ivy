@@ -1,7 +1,11 @@
 <ivy-module version="2.0">
-  <info organisation="org.apache" module="hello-ivy" />
-  <dependencies>
-    <!--<dependency org="commons-httpclient" name="commons-httpclient" rev="3.1" />-->
-    <dependency org="org.springframework" name="spring-web" rev="3.1.1.RELEASE" />
-  </dependencies>
+    <info organisation="org.apache" module="hello-ivy"/>
+    <configurations>
+        <conf name="A"/>
+        <conf name="B"/>
+    </configurations>
+    <dependencies>
+        <dependency org="commons-httpclient" name="commons-httpclient" rev="3.1" conf="A->default"/>
+        <dependency org="org.springframework" name="spring-core" rev="3.1.1.RELEASE" conf="B->test"/>
+    </dependencies>
 </ivy-module>

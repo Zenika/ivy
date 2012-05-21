@@ -1,0 +1,9 @@
+preamble:
+property: number: string, recommends: vpkgformula = [true!], suggests: vpkglist = [],
+          url: string = [""]
+
+package: junit%3ajunit
+number: 3.8
+version: 5
+type: jar
+url: http%3a//repo1.maven.org/maven2/junit/junit/3.8/junit-3.1.jar
