@@ -51,10 +51,14 @@ public class CUDFResolverTest extends TestCase {
         DependencyDescriptor dependencyDescriptor = new DefaultDependencyDescriptor(moduleRevisionId, false);
         ResolvedModuleRevision moduleRevision = resolver.getDependency(dependencyDescriptor, null);
         ModuleRevisionId resolvedModuleRevisionId = moduleRevision.getDescriptor().getResolvedModuleRevisionId();
-        assertEquals("Error: Unexpected value of resolved module id organisation", resolvedModuleRevisionId.getOrganisation(), moduleRevision.getId().getOrganisation());
-        assertEquals("Error: Unexpected value of resolved module id name", resolvedModuleRevisionId.getName(), moduleRevision.getId().getName());
-        assertEquals("Error: Unexpected value of resolved module id revision", resolvedModuleRevisionId.getRevision(), moduleRevision.getId().getRevision());
-        assertEquals("Error: The module revision should have to have two dependencies attached to it", moduleRevision.getDescriptor().getDependencies().length, 2);
+        assertEquals("Error: Unexpected value of resolved module id organisation",
+                     resolvedModuleRevisionId.getOrganisation(), moduleRevision.getId().getOrganisation());
+        assertEquals("Error: Unexpected value of resolved module id name", resolvedModuleRevisionId.getName(),
+                     moduleRevision.getId().getName());
+        assertEquals("Error: Unexpected value of resolved module id revision", resolvedModuleRevisionId.getRevision(),
+                     moduleRevision.getId().getRevision());
+        assertEquals("Error: The module revision should have to have two dependencies attached to it",
+                     moduleRevision.getDescriptor().getDependencies().length, 2);
         System.out.println(moduleRevision);
     }
 

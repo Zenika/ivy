@@ -1,3 +1,18 @@
+/*
+ *      Copyright 2012 Zenika
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.apache.ivy.plugins.resolver;
 
 import junit.framework.TestCase;
@@ -62,7 +77,6 @@ public class CUDFIntegrationTest extends TestCase{
     public void testCUDFIntegration1() throws Exception{
         ivy.configure(new File("test/test-cudf/ivysettings.xml"));
         ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
-        ResolveReport report = ivy.resolve(new File("src/example/configurations/multi-projects/filter-framework/ivy.xml"));
-//        assertEquals(4, report.getArtifacts().size());
+        ivy.resolve(new File("src/example/configurations/multi-projects/filter-framework/ivy.xml"));
     }
 }
