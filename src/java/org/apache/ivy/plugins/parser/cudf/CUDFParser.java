@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -37,8 +36,6 @@ public class CUDFParser {
     private static final String PACKAGE_START_LINE = "package: ";
 
     private static final String NUMBER_START_LINE = "number: ";
-
-    private static final String URL_START_LINE = "url: ";
 
     private static final String SEPARATOR = "%3a";
 
@@ -75,7 +72,6 @@ public class CUDFParser {
             String next = reader.readLine();
             String packageLine = null;
             String versionLine = null;
-            String urlLine = null;
             String typeLine = null;
             String cudfVersion = null;
             while (true) {
@@ -89,9 +85,9 @@ public class CUDFParser {
                     if (cudfVersion != null && !"0".equals(
                             versionLine.substring(VERSION_START_LINE.length()).trim()
                                                           )) {
-                        validateArtifact(packageLine, versionLine, urlLine, typeLine, artifacts);
+                        validateArtifact(packageLine, versionLine, typeLine, artifacts);
                     }
-                    packageLine = versionLine = urlLine = typeLine = cudfVersion = null;
+                    packageLine = versionLine = typeLine = cudfVersion = null;
                     if (line == null) {
                         break;
                     }
@@ -107,8 +103,6 @@ public class CUDFParser {
                     packageLine = line;
                 } else if (line.startsWith(NUMBER_START_LINE)) {
                     versionLine = line;
-                } else if (line.startsWith(URL_START_LINE)) {
-                    urlLine = line;
                 } else if (line.startsWith(TYPE_START_LINE)) {
                     typeLine = line;
                 } else if (line.startsWith(VERSION_START_LINE)) {
@@ -131,8 +125,7 @@ public class CUDFParser {
         return artifacts;
     }
 
-    private void validateArtifact(String packageLine, String versionLine, String urlLine, String typeLine,
-                                  List artifacts)
+    private void validateArtifact(String packageLine, String versionLine, String typeLine, List artifacts)
             throws MalformedURLException {
         if (packageLine == null || versionLine == null) {
             return;
@@ -145,22 +138,9 @@ public class CUDFParser {
         String[] info = packageLine.substring(PACKAGE_START_LINE.length()).trim().split(SEPARATOR);
         String version = versionLine.substring(NUMBER_START_LINE.length()).trim();
         String type = typeLine == null ? "" : typeLine.substring(TYPE_START_LINE.length()).trim();
-        String url = null;
-        Artifact artifact = null;
-        if (urlLine != null) {
-            url = urlLine.substring(URL_START_LINE.length()).trim().replaceAll(SEPARATOR, ":");
-            // TODO improve this check
-            if (!url.startsWith("http://")) {
-                url = baseURL + url;
-            }
-            artifact =
-                    new DefaultArtifact(ModuleRevisionId.newInstance(info[0], info[1], version), new Date(), info[1],
-                                        type, type, new URL(url), null);
-        } else {
-            artifact =
+        Artifact artifact =
                     new DefaultArtifact(ModuleRevisionId.newInstance(info[0], info[1], version), new Date(), info[1],
                                         type, type);
-        }
         artifacts.add(artifact);
     }
 }

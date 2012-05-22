@@ -29,7 +29,7 @@ import java.io.File;
 /**
  * @author Antoine ROUAZE <antoine.rouaze AT zenika.com>
  */
-public class CUDFIntegrationTest extends TestCase{
+public class CUDFIntegrationTest extends TestCase {
 
     private Ivy ivy;
 

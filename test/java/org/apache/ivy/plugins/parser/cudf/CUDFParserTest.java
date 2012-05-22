@@ -26,8 +26,7 @@ import java.util.List;
  * @author Adrien Lecharpentier <adrien.lecharpentier@zenika.com>
  * @since 2012-04-23 15:21
  */
-public class CUDFParserTest
-        extends TestCase {
+public class CUDFParserTest extends TestCase {
 
     private CUDFParser parser;
 
@@ -47,7 +46,6 @@ public class CUDFParserTest
     }
 
     private void assertArtifactIsValid(Artifact artifact) {
-        assertNotNull("Error: the url of the artifact is null.", artifact.getUrl());
         assertNotNull("Error: the name of the artifact is null", artifact.getName());
         assertNotNull("Error: the type of the artifact is null", artifact.getType());
         assertNotNull("Error: the module revision id of the artifact is null", artifact.getModuleRevisionId());
@@ -62,15 +60,6 @@ public class CUDFParserTest
         List artifacts =
                 parser.parse(this.getClass().getResourceAsStream("/org/apache/ivy/plugins/resolver/util/empty.cudf"));
         assertTrue(artifacts.isEmpty());
-    }
-
-    public void testBadUrlInCUDFParsing() {
-        try {
-            parser.parse(this.getClass().getResourceAsStream("/org/apache/ivy/plugins/resolver/util/bad-url.cudf"));
-            fail("Should thrown an exception");
-        } catch (MalformedURLException e) {
-
-        }
     }
 
     public void testNullResourceParsing() throws MalformedURLException {
