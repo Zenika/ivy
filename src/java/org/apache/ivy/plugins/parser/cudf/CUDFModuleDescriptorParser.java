@@ -31,11 +31,10 @@ import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.url.URLResource;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
@@ -121,7 +120,22 @@ public class CUDFModuleDescriptorParser implements ModuleDescriptorParser {
     }
 
     public boolean accept(Resource res) {
-        return res.getName().endsWith("cudf");
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(res.openStream()));
+            String preamble = reader.readLine();
+            return preamble.startsWith("preamble:");
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to read resource named " + res.getName(), e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    Message.warn("Unable to close stream resource");
+                }
+            }
+        }
     }
 
     public String getType() {
