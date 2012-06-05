@@ -1,5 +1,8 @@
 <ivysettings>
     <settings defaultResolver="cudf"/>
+    <parsers>
+        <cudf-parser/>
+    </parsers>
     <resolvers>
         <url name="cudf" m2compatible="true">
             <ivy pattern="file:test/test-cudf/repositories/cudf-with-url/[organisation]/[module]/[revision]/[module]-[revision].cudf"/>

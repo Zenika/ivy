@@ -53,7 +53,7 @@ public class CUDFModuleDescriptorParser implements ModuleDescriptorParser {
         return INSTANCE;
     }
 
-    private CUDFModuleDescriptorParser() {
+    public CUDFModuleDescriptorParser() {
     }
 
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL, boolean validate)
