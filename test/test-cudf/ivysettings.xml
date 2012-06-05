@@ -1,11 +1,9 @@
 <ivysettings>
-    <!--<settings defaultResolver="maven2"/>-->
     <settings defaultResolver="cudf"/>
-    <!--<caches defaultCacheDir="${basedir}/${dl}/cache">
-      <cache name="local" basedir="${basedir}/${dl}/cache" />
-    </caches>-->
     <resolvers>
-        <cudf name="cudf" pattern="[module]-[revision].[ext]" url="file:test/test-cudf/repositories/cudf-with-url" searchUrl="/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" m2compatible="true"/>
-        <!--<ibiblio name="maven2" m2compatible="true"/>-->
+        <url name="cudf" m2compatible="true">
+            <ivy pattern="file:test/test-cudf/repositories/cudf-with-url/[organisation]/[module]/[revision]/[module]-[revision].cudf"/>
+            <artifact pattern="http://repo.maven.apache.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+        </url>
     </resolvers>
 </ivysettings>
