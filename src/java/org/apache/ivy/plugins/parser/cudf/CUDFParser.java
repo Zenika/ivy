@@ -137,7 +137,7 @@ public class CUDFParser {
         }
         String[] info = packageLine.substring(PACKAGE_START_LINE.length()).trim().split(SEPARATOR);
         String version = versionLine.substring(NUMBER_START_LINE.length()).trim();
-        String type = typeLine == null ? "" : typeLine.substring(TYPE_START_LINE.length()).trim();
+        String type = typeLine == null || typeLine.isEmpty() ? "jar" : typeLine.substring(TYPE_START_LINE.length()).trim();
         Artifact artifact =
                     new DefaultArtifact(ModuleRevisionId.newInstance(info[0], info[1], version), new Date(), info[1],
                                         type, type);
