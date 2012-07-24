@@ -46,8 +46,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Benjamin Francisoud	
 	Jacob Grydholt Jensen
 	John Gibson
+	Mitch Gitman
 	Scott Goldstein
-	Pierre Hägnestrand
+	Pierre Hï¿½gnestrand
 	Scott Hebert
 	Tobias Himstedt
 	Aaron Hachez
@@ -129,6 +130,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: NullPointerExeption in AbstractOSGiResolver (IVY-1343) (thanks to Thomas Kurpick)
 - FIX: Delivered ivy descriptor inconsistent with resolve report / retrieve and other post-resolve actions (IVY-1300) (thanks to Ed Burcher)
 - FIX: The Updatesite resolver is downloading Eclipse features instead of Eclipse bundle/plugin
+- FIX: ivy:buildlist task confused by extends feature using two parents (IVY-1363) (thanks to Mitch Gitman and Jean-Louis Boudart)
+- FIX: ivy.xml extends feature complains about Windows filesystem path (IVY-1359) (thanks to Mitch Gitman and Jean-Louis Boudart)
+- FIX: buildlist task chokes on absolute path to parent Ivy module (IVY-1364) (thanks to Mitch Gitman and Jean-Louis Boudart)
 
    2.3.0-rc1
 =====================================
@@ -732,7 +736,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: IOException during publish causes NullPointerException (IVY-371)
 - FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
 - FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
-- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
+- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hï¿½gnestrand)
 
 
    version 1.4.1 - 2006-11-09
