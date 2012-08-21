@@ -17,18 +17,15 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Map;
-
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
@@ -37,6 +34,11 @@ import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Map;
 
 /**
  *
@@ -203,4 +205,6 @@ public interface DependencyResolver {
      *         with this dependency resolver.
      */
     RepositoryCacheManager getRepositoryCacheManager();
+
+    void initResolver(ResolveData resolveData, ModuleDescriptor root, ResolveReport report);
 }

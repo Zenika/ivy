@@ -17,12 +17,6 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
-
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.RelativeUrlResolver;
@@ -46,6 +40,7 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
@@ -67,6 +62,12 @@ import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.Message;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * This abstract resolver only provides handling for resolver name
@@ -613,5 +614,8 @@ public abstract class AbstractResolver
             return AbstractResolver.this.getSettings().substitute(value);
         }
         
+    }
+
+    public void initResolver(ResolveData resolveData, ModuleDescriptor root, ResolveReport report) {
     }
 }

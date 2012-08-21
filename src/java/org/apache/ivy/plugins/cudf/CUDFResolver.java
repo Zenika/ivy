@@ -33,7 +33,7 @@ public class CUDFResolver extends URLResolver {
 
     private Map/*<ModuleRevisionId, ModuleDescriptor>*/ moduleDescriptorMap = new HashMap();
 
-    public void retrieveAllDependencyMetadatas(ResolveData resolveData, ModuleDescriptor root, ResolveReport report) {
+    public void initResolver(ResolveData resolveData, ModuleDescriptor root, ResolveReport report) {
         if (client == null) {
             throw new IllegalStateException("The Archiva client must be configured.");
         }
