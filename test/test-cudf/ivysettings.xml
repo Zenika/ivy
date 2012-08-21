@@ -1,12 +1,13 @@
 <ivysettings>
-    <settings defaultResolver="cudf"/>
+    <settings defaultResolver="cudf" defaultResolveMode="cudf"/>
+    <typedef name="archivaMock" classname="org.apache.ivy.plugins.cudf.ArchivaClientMock"/>
     <parsers>
         <cudf-parser/>
     </parsers>
     <resolvers>
-        <url name="cudf" m2compatible="true">
-            <ivy pattern="file:test/test-cudf/repositories/cudf-with-url/[organisation]/[module]/[revision]/[module]-[revision].cudf"/>
-            <artifact pattern="http://repo.maven.apache.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
-        </url>
+        <cudf name="cudf">
+            <archivaMock/>
+            <artifact pattern="file:test/test-cudf/repositories/jar/[organisation]-[module]_[revision].[ext]"/>
+        </cudf>
     </resolvers>
 </ivysettings>
