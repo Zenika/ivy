@@ -17,26 +17,6 @@
  */
 package org.apache.ivy.core.resolve;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.LogOptions;
@@ -63,6 +43,7 @@ import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.core.sort.SortOptions;
 import org.apache.ivy.plugins.conflict.ConflictManager;
+import org.apache.ivy.plugins.cudf.CUDFResolver;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.repository.url.URLResource;
@@ -70,6 +51,26 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * The resolve engine which is the core of the dependency resolution mechanism used in Ivy. It
@@ -231,6 +232,13 @@ public class ResolveEngine {
             context.setResolveData(data);
             
             // resolve dependencies
+            //TODO: Urgent ! Find a way to allow only core compilation !
+            //TODO: Maybe we should do an (Big ?) Ivy refactor to include in the model or resolve engine the ability to resolvers to do fetching them self all dependencies
+            if (settings.getResolveMode(md.getModuleRevisionId().getModuleId()).equals(ResolveOptions.RESOLVEMODE_CUDF)) {
+                CUDFResolver cudfResolver = (CUDFResolver) data.getSettings().getResolver(md.getModuleRevisionId());
+                //TODO: Find best way to initialise the http client (blocked for now by settings injection in resolver) DONE !
+                cudfResolver.retrieveAllDependencyMetadatas(data, md, report);
+            }
             IvyNode[] dependencies = getDependencies(md, options, report);
             report.setDependencies(Arrays.asList(dependencies), options.getArtifactFilter());
             
@@ -1097,8 +1105,8 @@ public class ResolveEngine {
              * the parent direct dependencies in current root module conf.
              */
             Collection parentDepIvyNodes = node.getParent().getNode()
-                        .getDependencies(node.getRootModuleConf(), 
-                            new String[] {node.getParentConf()});
+                        .getDependencies(node.getRootModuleConf(),
+                                new String[]{node.getParentConf()});
             for (Iterator it = parentDepIvyNodes.iterator(); it.hasNext();) {
                 IvyNode parentDep = (IvyNode) it.next();
                 if (parentDep.getModuleId().equals(node.getModuleId())) {

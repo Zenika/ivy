@@ -17,14 +17,14 @@
  */
 package org.apache.ivy.core.resolve;
 
-import java.util.Date;
-
 import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.util.ConfigurationUtils;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
+
+import java.util.Date;
 
 /**
  * A set of options used during resolve related tasks
@@ -41,11 +41,13 @@ public class ResolveOptions extends LogOptions {
      * Dynamic resolve mode, using dynamic revision constraints in dependency descriptors.
      */
     public static final String RESOLVEMODE_DYNAMIC = "dynamic";
+
+    public static final String RESOLVEMODE_CUDF = "cudf";
     /**
      * Array of all available resolve modes.
      */
     public static final String[] RESOLVEMODES = 
-        new String[] {RESOLVEMODE_DEFAULT, RESOLVEMODE_DYNAMIC};
+        new String[] {RESOLVEMODE_DEFAULT, RESOLVEMODE_DYNAMIC, RESOLVEMODE_CUDF};
 
     /**
      * an array of configuration names to resolve - must not be null nor empty

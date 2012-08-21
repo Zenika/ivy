@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.util;
 
+import org.apache.ivy.core.IvyPatternHelper;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,8 +31,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
-import org.apache.ivy.core.IvyPatternHelper;
 
 /**
  * Ant 1.6.1 like Configurator 
@@ -55,6 +55,7 @@ import org.apache.ivy.core.IvyPatternHelper;
  * conf.endCreateChild(); // buildpath
  * </pre>
  */
+//TODO: Search a way to enable support of immutable object creation. Maybe with annotations...
 public class Configurator {
     public static class Macro {
         private MacroDef macrodef;
