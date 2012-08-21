@@ -22,7 +22,7 @@ public class TestCUDFResolver extends TestCase {
         ArchivaClientMock mock = new ArchivaClientMock();
         resolver.setClient(mock);
 
-        resolver.retrieveAllDependencyMetadatas(null, moduleDescriptor, null);
+        resolver.initResolver(null, moduleDescriptor, null);
         assertTrue(mock.isCalled());
         assertEquals(resolver.getModuleDescriptorMap().size(), 3);
     }
