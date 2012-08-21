@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<settings defaultResolver="default" >
+    <property name="local-maven-pattern" value="file:${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].[ext]" override="false"/>
+    <resolvers>
+        <chain name="default">
+            <ibiblio name="public" m2compatible="true" />
+            <url name="local-maven" m2compatible="true">
+                <artifact pattern="${local-maven-pattern}"/>
+            </url>
+        </chain>
+    </resolvers>
+</settings>

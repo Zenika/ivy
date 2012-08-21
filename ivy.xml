@@ -27,6 +27,7 @@
 		</description>
 	</info>
 	<configurations>
+        <!--TODO: We should add a CUDF configuration-->
 		<conf name="core" description="only ivy jar, without any dependencies"/>
 		<conf name="httpclient" extends="core" description="core + optional httpclient for better http handling"/>
 		<conf name="oro" extends="core" description="to use optional glob matcher"/>
@@ -52,6 +53,8 @@
 		<dependency org="com.jcraft" name="jsch" rev="0.1.31" conf="default,sftp->default" />
 		<dependency org="org.bouncycastle" name="bcpg-jdk14" rev="1.45" conf="default" />
         <dependency org="org.bouncycastle" name="bcprov-jdk14" rev="1.45" conf="default" />
+        <dependency org="com.zenika.dorm.cudf.binder" name="cudf-adapter-ivy" rev="1.0-SNAPSHOT" conf="default"/>
+        <dependency org="com.zenika.dorm.cudf.binder" name="cudf-core" rev="1.0-SNAPSHOT" conf="default"/>
 
 		<!-- Test dependencies -->
 		<dependency org="junit" name="junit" rev="3.8.2" conf="test->default" />
